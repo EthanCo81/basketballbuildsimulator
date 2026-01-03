@@ -1,5 +1,4 @@
 const weightsByHeight = require('../data/build_weights.json');
-const { WITHIN_BUCKET_INCREMENT_FACTOR = 1 } = require('../config');
 
 function findClosestHeight(h) {
   const heights = Object.keys(weightsByHeight).map(Number).filter(Number.isFinite);
@@ -32,28 +31,10 @@ function findSkillEntry(skillsObj, skillName) {
   return null;
 }
 
-// Helper: find contiguous bucket (startIdx..endIdx) of identical values containing idx
-function findBucketRange(arr, idx) {
-  const n = arr.length;
-  const base = arr[idx];
-  if (base == null) return [idx, idx];
-  let start = idx;
-  while (start > 0 && arr[start - 1] === base) start--;
-  let end = idx;
-  while (end < n - 1 && arr[end + 1] === base) end++;
-  return [start, end];
-}
-
 /**
  * Get the numeric weight for a given height (inches), skill name, and slider value (25..99)
  *
- * NEW: Returns the *cumulative* sum of per-step adjusted weights from 25 up to the current
- * slider value (inclusive). This preserves accumulated increments when moving past a bucket
- * boundary (e.g., moving from 74->75 keeps the contributions from 26..74).
- *
- * For an individual index inside a bucket, the per-step adjusted value is computed as:
- *   adjusted = base * (1 + (idx - bucketStart) * WITHIN_BUCKET_INCREMENT_FACTOR)
- * where base is the bucket's value at that index.
+ * Returns the cumulative sum of weights from 25 up to the current slider value (inclusive).
  */
 function getWeight(heightInches, skillName, sliderValue) {
   if (!heightInches || !skillName || !sliderValue) return null;
@@ -64,20 +45,13 @@ function getWeight(heightInches, skillName, sliderValue) {
   const idx = Number(sliderValue) - 25;
   if (!Array.isArray(arr) || idx < 0 || idx >= arr.length) return null;
 
-  // helper: compute adjusted per-index value (returns 0 for nulls)
-  const adjustedAt = (i) => {
-    const val = arr[i];
-    if (val == null) return 0;
-    const [start, end] = findBucketRange(arr, i);
-    if (start === end || !WITHIN_BUCKET_INCREMENT_FACTOR) return Number(val);
-    const deltaSteps = i - start;
-    return Number(val) * (1 + deltaSteps * Number(WITHIN_BUCKET_INCREMENT_FACTOR));
-  };
-
-  // cumulative sum from index 0 (25) up to idx
+  // Simple cumulative sum from index 0 (value 25) up to idx
   let total = 0;
   for (let i = 0; i <= idx; i++) {
-    total += adjustedAt(i);
+    const val = arr[i];
+    if (val != null) {
+      total += Number(val);
+    }
   }
   return total;
 }

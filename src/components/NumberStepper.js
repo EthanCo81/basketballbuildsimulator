@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function NumberStepper({
   value,
@@ -12,6 +13,8 @@ export default function NumberStepper({
   label,
   style,
 }) {
+  const { theme } = useTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
   const disabledDecrement = value <= min;
   const disabledIncrement = value >= max;
 
@@ -24,7 +27,7 @@ export default function NumberStepper({
           style={({ pressed }) => [styles.button, disabledDecrement && styles.disabled, pressed && styles.pressed]}
           accessibilityLabel={`Decrease ${label || 'value'}`}
         >
-          <MaterialIcons name="arrow-back-ios" size={18} color={disabledDecrement ? '#aaa' : '#0a84ff'} />
+          <MaterialIcons name="arrow-back-ios" size={16} color={disabledDecrement ? theme.disabled : '#0a84ff'} />
         </Pressable>
 
         <View style={styles.valueBox}>
@@ -36,28 +39,32 @@ export default function NumberStepper({
           style={({ pressed }) => [styles.button, disabledIncrement && styles.disabled, pressed && styles.pressed]}
           accessibilityLabel={`Increase ${label || 'value'}`}
         >
-          <MaterialIcons name="arrow-forward-ios" size={18} color={disabledIncrement ? '#aaa' : '#0a84ff'} />
+          <MaterialIcons name="arrow-forward-ios" size={16} color={disabledIncrement ? theme.disabled : '#0a84ff'} />
         </Pressable>
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { marginBottom: 12 },
-  label: { fontSize: 14, marginBottom: 6, fontWeight: '600' },
-  row: { flexDirection: 'row', alignItems: 'center' },
+const createStyles = (theme) => StyleSheet.create({
+  container: { marginBottom: 0 },
+  label: { fontSize: 11, marginBottom: 4, fontWeight: '600', textAlign: 'center', alignSelf: 'center', color: theme.text },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 2 },
   button: {
-    padding: 8,
+    width: 32,
+    height: 32,
     borderRadius: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   pressed: { opacity: 0.6 },
   disabled: { opacity: 0.45 },
   valueBox: {
-    minWidth: 100,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    flex: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
     alignItems: 'center',
+    backgroundColor: 'transparent',
   },
-  valueText: { fontSize: 16, fontWeight: '700' },
+  valueText: { fontSize: 12, fontWeight: '700', color: theme.text },
 });

@@ -1,0 +1,29 @@
+[
+  {
+    "height": 74,
+    "skills": {
+      "Close Shot": 60,
+      "Driving Layup": 65,
+      "Driving Dunk": 50,
+      "Standing Dunk": 45,
+      "Post Control": 40,
+      "Mid Range Shot": 55,
+      "Three Point Shot": 70,
+      "Free Throw": 75,
+      "Pass Accuracy": 60,
+      "Ball Handle": 65,
+      "Speed with Ball": 58,
+      "Interior Defense": 45,
+      "Perimeter Defense": 70,
+      "Steal": 65,
+      "Block": 40,
+      "Offensive Rebound": 35,
+      "Defensive Rebound": 50,
+      "Speed": 70,
+      "Agility": 68,
+      "Strength": 45,
+      "Vertical": 55
+    },
+    "totalWeight": 30000
+  }
+]

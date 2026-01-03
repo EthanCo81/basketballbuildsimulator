@@ -140,3 +140,7 @@ vite.config.ts.timestamp-*
 
 # Mac specific files
 .DS_Store
+
+#Virtual Environments
+.venv/
+venv/
